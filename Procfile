@@ -1,0 +1,1 @@
+web: yes yes | python manage.py collectstatic & python manage.py migrate & gunicorn scholarly_website_backend.wsgi --log-file -
