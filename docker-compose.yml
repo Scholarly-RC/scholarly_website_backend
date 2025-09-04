@@ -1,0 +1,102 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  n8n:
+    image: n8nio/n8n:latest
+    ports:
+      - "5678:5678"
+    env_file:
+      - .env
+    environment:
+      - DB_TYPE=${DB_TYPE}
+      - DB_POSTGRESDB_HOST=${DB_POSTGRESDB_HOST}
+      - DB_POSTGRESDB_PORT=${DB_POSTGRESDB_PORT}
+      - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE}
+      - DB_POSTGRESDB_USER=${DB_POSTGRESDB_USER}
+      - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD}
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+    depends_on:
+      - postgres
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    env_file:
+      - .env
+    environment:
+      - QDRANT_API_KEY=${QDRANT_API_KEY}
+
+  directus:
+    image: directus/directus:latest
+    ports:
+      - "8055:8055"
+    env_file:
+      - .env
+    environment:
+      KEY: ${KEY}
+      SECRET: ${SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      DB_CLIENT: ${DB_CLIENT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      STORAGE_LOCATIONS: ${STORAGE_LOCATIONS}
+      STORAGE_R2_DRIVER: ${STORAGE_R2_DRIVER}
+      STORAGE_R2_KEY: ${STORAGE_R2_KEY}
+      STORAGE_R2_SECRET: ${STORAGE_R2_SECRET}
+      STORAGE_R2_BUCKET: ${STORAGE_R2_BUCKET}
+      STORAGE_R2_REGION: ${STORAGE_R2_REGION}
+      STORAGE_R2_ENDPOINT: ${STORAGE_R2_ENDPOINT}
+      STORAGE_R2_FORCE_PATH_STYLE: ${STORAGE_R2_FORCE_PATH_STYLE}
+    depends_on:
+      - postgres
+    volumes:
+      - directus_uploads:/directus/uploads
+      - directus_extensions:/directus/extensions
+
+volumes:
+  postgres_data:
+  n8n_data:
+  qdrant_data:
+  directus_uploads:
+  directus_extensions:
