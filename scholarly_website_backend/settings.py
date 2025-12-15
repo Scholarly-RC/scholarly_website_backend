@@ -148,32 +148,33 @@ OPENAI_LLM_MODEL = os.getenv("OPENAI_LLM_MODEL", "openai/gpt-5-nano")
 
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ALLOWED_ORIGINS",
+        "http://localhost:3000,http://127.0.0.1:3000"
+    ).split(",")
+    if origin.strip()
 ]
 
 # Allow credentials if needed
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = os.getenv("CORS_ALLOW_CREDENTIALS", "True") == "True"
 
 # Allow all methods
 CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
+    method.strip()
+    for method in os.getenv(
+        "CORS_ALLOW_METHODS",
+        "DELETE,GET,OPTIONS,PATCH,POST,PUT"
+    ).split(",")
+    if method.strip()
 ]
 
 # Allow all headers
 CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
+    header.strip()
+    for header in os.getenv(
+        "CORS_ALLOW_HEADERS",
+        "accept,accept-encoding,authorization,content-type,dnt,origin,user-agent,x-csrftoken,x-requested-with"
+    ).split(",")
+    if header.strip()
 ]
