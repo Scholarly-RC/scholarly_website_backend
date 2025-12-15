@@ -7,7 +7,9 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+# SECRET_KEY with default for build time (collectstatic)
+# In production, this must be set via environment variable
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-build-time-only-key-not-for-production-use")
 
 DEBUG = os.getenv("DEBUG", False) == "True"
 
