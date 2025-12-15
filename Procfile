@@ -1,1 +1,1 @@
-web: python manage.py qcluster & yes yes | python manage.py collectstatic & python manage.py migrate & gunicorn scholarly_website_backend.wsgi --log-file -
+web: uv run python manage.py qcluster & uv run python manage.py migrate && uv run gunicorn scholarly_website_backend.wsgi --log-file -
