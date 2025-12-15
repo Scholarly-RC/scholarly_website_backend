@@ -1,0 +1,13 @@
+[phases.setup]
+nixPkgs = ["python311", "uv"]
+
+[phases.install]
+cmds = [
+  "uv sync --frozen"
+]
+
+[phases.build]
+cmds = [
+  "uv run python manage.py collectstatic --noinput"
+]
+
